@@ -672,8 +672,7 @@ class PlexLibrary(Screen):
 						 "firstCharacter":"secondary"
 					  }
 
-		for sections in directories:   
-			
+		for sections in directories:
 			isSearchFilter = False
 			#sample = <Directory prompt="Search Movies - Teens" search="1" key="search?type=1" title="Search..." />
 			prompt = str(sections.get('prompt', 'noSearch')) 
@@ -688,18 +687,21 @@ class PlexLibrary(Screen):
 			
 			else:
 				t_mode = viewGroupTypes[sections.get('key')]
-			
+
+			t_viewGroup = sections.get('key', "not set")
 			t_url = p_url + "/" + str(sections.get('key'))
-			
+
 			printl("t_url: " + str(t_url), self, "D")
 			printl("t_mode: " + str(t_mode),self, "D")
-			printl("isSearchFilter: " + str(isSearchFilter), self, "D")  
+			printl("t_viewGroup: " + str(t_viewGroup),self, "D")
+			printl("isSearchFilter: " + str(isSearchFilter), self, "D")
 			printl("t_source: " + str(p_source), self, "D")
 			printl("t_uuid: " + str(p_uuid), self, "D")
 
 			params = {}
 			params["t_url"] = t_url
 			params["t_mode"] = str(p_mode)
+			params["t_viewGroup"] = str(t_viewGroup)
 			params["isSearchFilter"] =isSearchFilter
 			params["t_source"] = p_source
 			params["t_uuid"] = p_uuid
@@ -710,6 +712,7 @@ class PlexLibrary(Screen):
 					printl( "_MODE_TVSHOWS detected", self, "X")
 					if str(sections.get('key')) == "onDeck" or str(sections.get('key')) == "recentlyViewed" or str(sections.get('key')) == "newest" or str(sections.get('key')) == "recentlyAdded":
 						params["t_showEpisodesDirectly"] = True
+
 					mainMenuList.append((_(sections.get('title').encode('utf-8')), getPlugin("tvshows", Plugin.MENU_TVSHOWS), "showEntry", params))
 						
 				elif t_mode == 'movie':
@@ -1523,7 +1526,7 @@ class PlexLibrary(Screen):
 	#===============================================================================
 	# 
 	#===============================================================================
-	def getEpisodesOfSeason(self, url, tree=None ): 	
+	def getEpisodesOfSeason(self, url, tree=None, directMode=False):
 		printl("", self, "S")
 		
 		server=self.getServerFromURL(url)
@@ -1573,7 +1576,10 @@ class PlexLibrary(Screen):
 					 
 			#Required listItem entries for XBMC
 			details = {}
-			details["viewMode"]				= "play"
+			if not directMode:
+				details["viewMode"]				= "play"
+			else:
+				details["viewMode"]				= "directMode"
 			details['ratingKey']			= str(episode.get('ratingKey', 0)) # primary key in plex
 			details['title']				= episode.get('title','Unknown').encode('utf-8')
 			details['summary']				= episode.get('summary','')
