@@ -294,14 +294,14 @@ class DPS_MainMenu(Screen):
 		plugin = selection[2] #e.g. Plugin.MENU_MOVIES
 		
 		# ARTISTS
-		params = copy.deepcopy(selection[3])
+		params = copy.deepcopy(selection[4])
 		url = params['t_url']
 		params['t_url'] = url + "?type=8"
 		mainMenuList.append((_("by Artists"), plugin, "artistsEntry", params))
 		printl("mainMenuList 1: " + str(mainMenuList), self, "D")
 		
 		#ALBUMS
-		params = copy.deepcopy(selection[3])
+		params = copy.deepcopy(selection[4])
 		params['t_url'] = url + "?type=9"
 		mainMenuList.append((_("by Albums"), plugin, "albumsEntry", params))
 		printl("mainMenuList 2: " + str(mainMenuList), self, "D")
@@ -597,11 +597,11 @@ class DPS_MainMenu(Screen):
 		params = {} 
 		mainMenuList.append((_("Movies"), Plugin.MENU_MOVIES, "movieEntry", params))
 		mainMenuList.append((_("Tv Shows"), Plugin.MENU_TVSHOWS, "showEntry" ,params))
-		
+		mainMenuList.append((_("Music"), Plugin.MENU_MUSIC, "musicEntry", params))
+
 		extend = False # SWITCH
 		
 		if extend:
-			mainMenuList.append((_("Music"), Plugin.MENU_MUSIC, "musicEntry", params))
 			mainMenuList.append((_("Pictures"), Plugin.MENU_PICTURES, "pictureEntry", params))
 			mainMenuList.append((_("Channels"), Plugin.MENU_CHANNELS, "channelEntry", params))
 		
