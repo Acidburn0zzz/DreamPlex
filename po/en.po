@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enigma2-plugin-extentions-dreamplex 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-30 17:55+0100\n"
-"PO-Revision-Date: 2013-12-30 17:55+0100\n"
-"Last-Translator: Automatically generated\n"
+"POT-Creation-Date: 2014-01-06 16:15+0100\n"
+"PO-Revision-Date: 2014-01-06 15:26+0100\n"
+"Last-Translator: Andy Blackburn <andyblac@icloud.com>\n"
 "Language-Team: none\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -240,11 +240,65 @@ msgstr "Add Entry"
 msgid "Adding new mapping was not completed"
 msgstr "Adding new mapping was not completed"
 
+msgid "All"
+msgstr "All"
+
+msgid "All Filmy"
+msgstr "All Filmy"
+
+msgid "All Movies"
+msgstr "All Movies"
+
+msgid "All Shows"
+msgstr "All Shows"
+
+msgid "All episodes"
+msgstr "All episodes"
+
 msgid "Are you sure?"
 msgstr "Are you sure?"
 
 msgid "Audio Functions"
 msgstr "Audio Functions"
+
+msgid "Audio:"
+msgstr "Audio:"
+
+msgid "By Collection"
+msgstr "By Collection"
+
+msgid "By Content Rating"
+msgstr "By Content Rating"
+
+msgid "By Country"
+msgstr "By Country"
+
+msgid "By Decade"
+msgstr "By Decade"
+
+msgid "By Director"
+msgstr "By Director"
+
+msgid "By First Letter"
+msgstr "By First Letter"
+
+msgid "By Folder"
+msgstr "By Folder"
+
+msgid "By Genre"
+msgstr "By Genre"
+
+msgid "By Rating"
+msgstr "By Rating"
+
+msgid "By Resolution"
+msgstr "By Resolution"
+
+msgid "By Starring Actor"
+msgstr "By Starring Actor"
+
+msgid "By Year"
+msgstr "By Year"
 
 msgid "Cancel"
 msgstr "Cancel"
@@ -322,18 +376,20 @@ msgstr "Exit"
 msgid "General Settings"
 msgstr "General Settings"
 
+msgid "Genre:"
+msgstr "Genre:"
+
 msgid "Help"
 msgstr "Help"
+
+msgid "I will now try to play the file via transcode."
+msgstr "I will now try to play the file via transcode."
 
 msgid "IP"
 msgstr "IP"
 
-msgid ""
-"If activated on each start we will check if there is a new version depending "
-"on your update type."
-msgstr ""
-"If activated on each start we will check if there is a new version depending "
-"on your update type."
+msgid "If activated on each start we will check if there is a new version depending on your update type."
+msgstr "If activated on each start we will check if there is a new version depending on your update type."
 
 msgid "If you are using myPlex"
 msgstr "If you are using myPlex"
@@ -349,6 +405,9 @@ msgstr "Initiate Library refresh"
 
 msgid "Invalid Location"
 msgstr "Invalid Location"
+
+msgid "Location:"
+msgstr "Location:"
 
 msgid "MYPLEX"
 msgstr "MYPLEX"
@@ -402,6 +461,9 @@ msgstr "Not available"
 msgid "OK"
 msgstr "OK"
 
+msgid "On Deck"
+msgstr "On Deck"
+
 msgid "Options"
 msgstr "Options"
 
@@ -420,13 +482,14 @@ msgstr "Playback Settings"
 msgid "Please enter your search string!"
 msgstr "Please enter your search string!"
 
+msgid "Please verify you direct local settings"
+msgstr "Please verify you direct local settings"
+
 msgid ""
-"Plexserver seems to be offline. Please check your your settings or "
-"connection!\n"
+"Plexserver seems to be offline. Please check your your settings or connection!\n"
 " Retry?"
 msgstr ""
-"Plexserver seems to be offline. Please check your your settings or "
-"connection!\n"
+"Plexserver seems to be offline. Please check your your settings or connection!\n"
 " Retry?"
 
 msgid ""
@@ -449,11 +512,41 @@ msgstr "Press exit to return"
 msgid "Really delete this Server Entry?"
 msgstr "Really delete this Server Entry?"
 
+msgid "Recently Added"
+msgstr "Recently Added"
+
+msgid "Recently Aired"
+msgstr "Recently Aired"
+
+msgid "Recently Released"
+msgstr "Recently Released"
+
+msgid "Recently Viewed"
+msgstr "Recently Viewed"
+
+msgid "Recently Viewed Episodes"
+msgstr "Recently Viewed Episodes"
+
+msgid "Recently Viewed Shows"
+msgstr "Recently Viewed Shows"
+
 msgid "Refresh this section"
 msgstr "Refresh this section"
 
+msgid "Runtime:"
+msgstr "Runtime:"
+
 msgid "Save"
 msgstr "Save"
+
+msgid "Search Episodes..."
+msgstr "Search Episodes..."
+
+msgid "Search Shows..."
+msgstr "Search Shows..."
+
+msgid "Search..."
+msgstr "Search..."
 
 msgid "Select filter"
 msgstr "Select filter"
@@ -470,6 +563,9 @@ msgstr "Select sort"
 msgid "Select view"
 msgstr "Select view"
 
+msgid "Series"
+msgstr "Series"
+
 msgid "Server"
 msgstr "Server"
 
@@ -482,6 +578,12 @@ msgstr "Settings"
 msgid "Show media details"
 msgstr "Show media details"
 
+msgid "Shows"
+msgstr "Shows"
+
+msgid "Sorry I didn't find the file on the provided locations"
+msgstr "Sorry I didn't find the file on the provided locations"
+
 msgid "Sorry unable to perform action, something has failed!!"
 msgstr "Sorry unable to perform action, something has failed!!"
 
@@ -493,6 +595,9 @@ msgstr "Streamed"
 
 msgid "Subtitle Functions"
 msgstr "Subtitle Functions"
+
+msgid "Subtitles:"
+msgstr "Subtitles:"
 
 msgid "System"
 msgstr "System"
@@ -526,23 +631,8 @@ msgstr "Transcoded"
 msgid "Tv Shows"
 msgstr "Tv Shows"
 
-#, python-format
-msgid ""
-"UNEXPECTED ERROR:\n"
-"%s"
-msgstr ""
-"UNEXPECTED ERROR:\n"
-"%s"
-
-#, python-format
-msgid ""
-"UNEXPECTED ERROR:\n"
-"%s\n"
-"%s"
-msgstr ""
-"UNEXPECTED ERROR:\n"
-"%s\n"
-"%s"
+msgid "UNEXPECTED ERROR:"
+msgstr "UNEXPECTED ERROR:"
 
 #, python-format
 msgid ""
@@ -553,16 +643,15 @@ msgstr ""
 "UNEXPECTED ERROR:\n"
 "This is the answer from the request ...\n"
 "%s"
+
+msgid "Unwatched"
+msgstr "Unwatched"
 
 msgid "Use Beta only if you really want to help with testing"
 msgstr "Use Beta only if you really want to help with testing"
 
-msgid ""
-"Use this if you do not have enough space on your box e.g. no hdd drive just "
-"flash."
-msgstr ""
-"Use this if you do not have enough space on your box e.g. no hdd drive just "
-"flash."
+msgid "Use this if you do not have enough space on your box e.g. no hdd drive just flash."
+msgstr "Use this if you do not have enough space on your box e.g. no hdd drive just flash."
 
 msgid "Use this if you have m1v videos as backdrops"
 msgstr "Use this if you have m1v videos as backdrops"
@@ -573,25 +662,11 @@ msgstr "Userinterface Settings"
 msgid "Wake On Lan Settings"
 msgstr "Wake On Lan Settings"
 
-#, python-format
-msgid ""
-"Warning:\n"
-"%s\n"
-"\n"
-"%s\n"
-"\n"
-"%s\n"
-"\n"
-"%s"
-msgstr ""
-"Warning:\n"
-"%s\n"
-"\n"
-"%s\n"
-"\n"
-"%s\n"
-"\n"
-"%s"
+msgid "Warning:"
+msgstr "Warning:"
+
+msgid "Year:"
+msgstr "Year:"
 
 msgid "You can use Systemcheck in the menu."
 msgstr "You can use Systemcheck in the menu."
@@ -602,12 +677,8 @@ msgstr "You have to reenter the section to see the changes!"
 msgid "You need curl installed for this feature! Please check in System ..."
 msgstr "You need curl installed for this feature! Please check in System ..."
 
-msgid ""
-"You need gstreamer_fragmented installed for this feature! Please check in "
-"System ... "
-msgstr ""
-"You need gstreamer_fragmented installed for this feature! Please check in "
-"System ... "
+msgid "You need gstreamer_fragmented installed for this feature! Please check in System ... "
+msgstr "You need gstreamer_fragmented installed for this feature! Please check in System ... "
 
 #, python-format
 msgid ""
@@ -629,26 +700,29 @@ msgstr "by Artists"
 msgid "check myPlex Token"
 msgstr "check myPlex Token"
 
+msgid "fastScroll = Off"
+msgstr "fastScroll = Off"
+
+msgid "fastScroll = On"
+msgstr "fastScroll = On"
+
+msgid "for the user:"
+msgstr "for the user:"
+
 msgid "found mips32el (OE 2.0) => Check for 'gst-plugins-bad-fragmented"
 msgstr "found mips32el (OE 2.0) => Check for 'gst-plugins-bad-fragmented"
 
 msgid "found mipsel (OE 1.6) => Check for 'gst-plugin-fragmented"
 msgstr "found mipsel (OE 1.6) => Check for 'gst-plugin-fragmented"
 
+msgid "load additional data"
+msgstr "load additional data"
+
 msgid "mappings"
 msgstr "mappings"
 
-#, python-format
-msgid ""
-"myPlex Token:\n"
-"%s \n"
-"for the user:\n"
-"%s"
-msgstr ""
-"myPlex Token:\n"
-"%s \n"
-"for the user:\n"
-"%s"
+msgid "myPlex Token:"
+msgstr "myPlex Token:"
 
 msgid "no xml as response - directory"
 msgstr "no xml as response - directory"
@@ -668,5 +742,13 @@ msgstr "please check if curl is installed."
 msgid "plex client for enigma2"
 msgstr "plex client for enigma2"
 
-msgid "toogle View "
-msgstr "toogle View "
+#, python-format
+msgid "set Filter (set to '%s')"
+msgstr "set Filter (set to '%s')"
+
+msgid "show media functions"
+msgstr "show media functions"
+
+msgid "toggle View "
+msgstr "toggle View "
+
