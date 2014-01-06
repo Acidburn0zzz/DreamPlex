@@ -1,4 +1,4 @@
-SUBDIRS = skins
+SUBDIRS = skins po
 
 installdir = $(libdir)/enigma2/python/Plugins/Extensions/DreamPlex
 
