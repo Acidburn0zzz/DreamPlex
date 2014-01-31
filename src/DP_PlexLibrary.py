@@ -137,6 +137,10 @@ class PlexLibrary(Screen):
 	g_myplex_accessTokenDict = {}
 	g_sectionCache = None
 	g_multiUser = False # this is only true if we use myPlex Connection and we have a plexPlass Account active on the server
+	g_currentError = ""
+	seenPic = "seen-fs8.png"
+	unseenPic = "unseen-fs8.png"
+	startedPic = "started-fs8.png"
 	
 	#Create the standard header structure and load with a User Agent to ensure we get back a response.
 	g_txheaders = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US;rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 ( .NET CLR 3.5.30729)',}
@@ -161,15 +165,16 @@ class PlexLibrary(Screen):
 		self.g_sessionID = str(uuid.uuid4())
 		
 		# server settings
-		self.g_name = str(serverConfig.name.value)
-		self.g_connectionType = str(serverConfig.connectionType.value)
-		self.g_port = str(serverConfig.port.value)
-		self.g_quality = str(serverConfig.quality.value)
-		self.g_myplex_token = str(serverConfig.myplexToken.value)
-		self.g_playbackType = serverConfig.playbackType.value
+		self.g_name = str(self.g_serverConfig.name.value)
+		self.g_connectionType = str(self.g_serverConfig.connectionType.value)
+		self.g_port = str(self.g_serverConfig.port.value)
+		self.g_quality = str(self.g_serverConfig.quality.value)
+		self.g_myplex_token = str(self.g_serverConfig.myplexToken.value)
+		self.g_playbackType = self.g_serverConfig.playbackType.value
+		self.g_localAuth = self.g_serverConfig.localAuth.value
 		
 		# PLAYBACK TYPES
-		self.g_segments = serverConfig.segments.value # is needed here because of fallback
+		self.g_segments = self.g_serverConfig.segments.value # is needed here because of fallback
 		
 		if self.g_playbackType == "0": # STREAMED
 			self.g_stream = "1"
@@ -178,7 +183,7 @@ class PlexLibrary(Screen):
 		elif self.g_playbackType == "1": # TRANSCODED
 			self.g_stream = "1"
 			self.g_transcode = "true"
-			self.g_segments = serverConfig.segments.value
+			self.g_segments = self.g_serverConfig.segments.value
 			
 			printl("using transcode: " + str(self.g_transcode), self, "I")
 			printl("using this transcoding quality: " +  str(self.g_quality), self, "I")
@@ -192,10 +197,10 @@ class PlexLibrary(Screen):
 			self.g_stream = "2"
 			self.g_transcode = "false"
 			self.g_nasoverride = "true"
-			self.g_nasoverrideip = "%d.%d.%d.%d" % tuple(serverConfig.nasOverrideIp.value)
-			self.g_nasuserid = str(serverConfig.smbUser.value)
-			self.g_naspass = str(serverConfig.smbPassword.value)
-			self.g_nasroot = str(serverConfig.nasRoot.value)
+			self.g_nasoverrideip = "%d.%d.%d.%d" % tuple(self.g_serverConfig.nasOverrideIp.value)
+			self.g_nasuserid = str(self.g_serverConfig.smbUser.value)
+			self.g_naspass = str(self.g_serverConfig.smbPassword.value)
+			self.g_nasroot = str(self.g_serverConfig.nasRoot.value)
 
 		printl("using this debugMode: " + str(config.plugins.dreamplex.debugMode.value), self, "D")
 		printl("using this serverName: " +  self.g_name, self, "I") 
@@ -203,46 +208,24 @@ class PlexLibrary(Screen):
 		
 		# CONNECTIONS TYPES
 		if self.g_connectionType == "2": # MYPLEX
-			self.g_myplex_username = serverConfig.myplexUsername.value
-			self.g_myplex_password = serverConfig.myplexPassword.value
-			self.g_myplex_url	  = serverConfig.myplexUrl.value
-			
-			if self.g_myplex_token == "" or serverConfig.renewMyplexToken.value == True:
-				printl("serverconfig: " + str(serverConfig), self, "D")
-				self.g_myplex_token = self.getNewMyPlexToken()
-
-				if self.g_myplex_token is False:
-					self.g_error = True
-					
-				else:
-					serverConfig.myplexTokenUsername.value = self.g_myplex_username
-					serverConfig.myplexTokenUsername.save()
-					serverConfig.myplexToken.value = self.g_myplex_token
-					serverConfig.myplexToken.save()
-					
-			else:
-				self.g_myplex_token = serverConfig.myplexToken.value
-			
-			printl("myplexUrl: " +  str(self.g_myplex_url), self, "I")	
-			printl("myplex_username: " +  str(self.g_myplex_username), self, "I", True, 10)
-			printl("myplex_password: " +  str(self.g_myplex_password), self, "I", True, 6)
-			printl("myplex_token: " +  str(self.g_myplex_token), self, "I", True, 6)
+			self.setMyPlexData()
 			
 		elif self.g_connectionType == "0": # IP
-			self.g_host = "%d.%d.%d.%d" % tuple(serverConfig.ip.value)
-			
-			printl("using this serverIp: " +  self.g_host, self, "I")
-			printl("using this serverPort: " +  self.g_port, self, "I")
+			self.setIpData()
+
+			if self.g_localAuth:
+				self.setMyPlexData()
+
 		else: # DNS
 			try:
-				self.g_host = str(socket.gethostbyname(serverConfig.dns.value))
-				printl("using this FQDN: " +  serverConfig.dns.value, self, "I")
+				self.g_host = str(socket.gethostbyname(self.g_serverConfig.dns.value))
+				printl("using this FQDN: " +  self.g_serverConfig.dns.value, self, "I")
 				printl("found this ip for fqdn: " + self.g_host, self, "I")
 				printl("using this serverPort: " +  self.g_port, self, "I")
 			except Exception, e:
 				printl("socket error: " + str(e), self, "W")
 				printl("trying fallback to ip", self, "I")
-				self.g_host = "%d.%d.%d.%d" % tuple(serverConfig.ip.value) 
+				self.g_host = "%d.%d.%d.%d" % tuple(self.g_serverConfig.ip.value)
 		
 		if self.g_error is True:
 			self.leaveOnError()
@@ -250,7 +233,51 @@ class PlexLibrary(Screen):
 			#Fill serverdata to global g_serverDict
 			self.prepareServerDict()
 		
-		self.getSeenVisus()
+		printl("", self, "C")
+
+	#===========================================================================
+	#
+	#===========================================================================
+	def setIpData(self):
+		printl("", self, "S")
+
+		self.g_host = "%d.%d.%d.%d" % tuple(self.g_serverConfig.ip.value)
+
+		printl("using this serverIp: " +  self.g_host, self, "I")
+		printl("using this serverPort: " +  self.g_port, self, "I")
+
+		printl("", self, "C")
+
+	#===========================================================================
+	#
+	#===========================================================================
+	def setMyPlexData(self):
+		printl("", self, "S")
+
+		self.g_myplex_username = self.g_serverConfig.myplexUsername.value
+		self.g_myplex_password = self.g_serverConfig.myplexPassword.value
+		self.g_myplex_url	  = self.g_serverConfig.myplexUrl.value
+
+		if self.g_myplex_token == "" or self.g_serverConfig.renewMyplexToken.value == True:
+			printl("serverconfig: " + str(self.g_serverConfig), self, "D")
+			self.g_myplex_token = self.getNewMyPlexToken()
+
+			if self.g_myplex_token is False:
+				self.g_error = True
+
+			else:
+				self.g_serverConfig.myplexTokenUsername.value = self.g_myplex_username
+				self.g_serverConfig.myplexTokenUsername.save()
+				self.g_serverConfig.myplexToken.value = self.g_myplex_token
+				self.g_serverConfig.myplexToken.save()
+
+		else:
+			self.g_myplex_token = self.g_serverConfig.myplexToken.value
+
+		printl("myplexUrl: " +  str(self.g_myplex_url), self, "D")
+		printl("myplex_username: " +  str(self.g_myplex_username), self, "D", True, 10)
+		printl("myplex_password: " +  str(self.g_myplex_password), self, "D", True, 6)
+		printl("myplex_token: " +  str(self.g_myplex_token), self, "D", True, 6)
 
 		printl("", self, "C")
 
@@ -297,8 +324,13 @@ class PlexLibrary(Screen):
 			# we have to set self.g_myplex_accessTokenDict here
 			# because none will trigger empty tokens that are needed when we do not use myPlex
 			self.g_myplex_accessTokenDict = {}
-			self.g_myplex_accessTokenDict[str(self.g_address)] = None
-			
+
+			# just in case we use myPlex also in local Lan we have to set the token data
+			if self.g_localAuth:
+				self.g_myplex_accessTokenDict[str(self.g_address)] = self.g_myplex_token
+			else:
+				self.g_myplex_accessTokenDict[str(self.g_address)] = None
+
 			# now we genereate and store all headers that are needed
 			self.setAccessTokenHeader()
 
@@ -512,7 +544,7 @@ class PlexLibrary(Screen):
 					printl("myPlexUrlwithSection: " + str(html),self, "D")
 				
 			if html is False or html is None:
-				self.session.open(MessageBox,_("UNEXPECTED ERROR:\nThis is the answer from the request ...\n%s") % html, MessageBox.TYPE_INFO)
+				self.session.open(MessageBox,_("UNEXPECTED ERROR:\nThis is the answer from the request ...\n%s") % self.g_currentError, MessageBox.TYPE_INFO)
 				continue
 
 			tree = None
@@ -949,6 +981,7 @@ class PlexLibrary(Screen):
 				error = "HTTP response error: " + str(data.status) + " " + str(data.reason)
 				printl( error, self, "I")
 				printl("", self, "C")
+				self.g_currentError = error
 				return False
 			
 			else:   
@@ -2076,6 +2109,7 @@ class PlexLibrary(Screen):
 		playerData["multiUserServer"] = multiUserServer
 		playerData["playbackType"] = self.g_playbackType
 		playerData["connectionType"] = self.g_connectionType
+		playerData["localAuth"] = self.g_localAuth
 		playerData["transcodingSession"] = self.g_sessionID
 		playerData["videoData"] = self.streams['videoData']
 		playerData["mediaData"] = self.streams['mediaData']
@@ -2852,28 +2886,6 @@ class PlexLibrary(Screen):
 			printl("Plex Client Capability = " + self.g_capability, self, "I")
 			
 			printl("", self, "C")   
-
-	#===============================================================================
-	#
-	#===============================================================================
-	def getSeenVisus(self):
-		printl("", self, "S")
-
-		tree = Singleton().getSkinParamsInstance()
-
-		for seenPic in tree.findall('seenPic'):
-			self.seenPic = str(seenPic.get('path'))
-			printl("self.seenPic: " + str(self.seenPic), self, "D")
-
-		for startedPic in tree.findall('startedPic'):
-			self.startedPic = str(startedPic.get('path'))
-			printl("self.startedPic: " + str(self.startedPic), self, "D")
-
-		for unseenPic in tree.findall('unseenPic'):
-			self.unseenPic = str(unseenPic.get('path'))
-			printl("self.unseenPic: " + str(self.unseenPic), self, "D")
-
-		printl("", self, "C")
 
 	#===========================================================================
 	# 

@@ -55,7 +55,6 @@ from DP_ViewFactory import getViews
 from DP_Player import DP_Player
 
 from DPH_Singleton import Singleton
-#from DPH_Arts import getPictureData
 
 from __common__ import printl2 as printl, convertSize, loadPicture
 from __plugin__ import getPlugins, Plugin
@@ -337,8 +336,8 @@ class DP_View(Screen, NumericalTextInput):
 
 		# on layout finish we have to do some stuff
 		self.onLayoutFinish.append(self.setPara)
-		self.onLayoutFinish.append(self.finishLayout)
 		self.onLayoutFinish.append(self.processGuiElements)
+		self.onLayoutFinish.append(self.finishLayout)
 
 		printl("", self, "C")
 
@@ -959,6 +958,9 @@ class DP_View(Screen, NumericalTextInput):
 	def onToggleView(self, forceUpdate=False):
 		printl("", self, "S")
 
+		if config.plugins.dreamplex.useBackdropVideos.value:
+			self.stopBackdropVideo()
+
 		select = None
 		selection = self["listview"].getCurrent()
 		if selection is not None:
@@ -1160,6 +1162,9 @@ class DP_View(Screen, NumericalTextInput):
 		selectKeyValuePair = self.onLeaveSelectKeyValuePair
 		printl("selectKeyValuePair: " + str(selectKeyValuePair), self, "D")
 
+		if config.plugins.dreamplex.useBackdropVideos.value:
+			self.stopBackdropVideo()
+
 		if config.plugins.dreamplex.playTheme.value:
 			printl("stoping theme playback", self, "D")
 			self.session.nav.stopService()
@@ -1215,19 +1220,23 @@ class DP_View(Screen, NumericalTextInput):
 		# we need to do this because since we save cache via pickle the seen pic object cant be saved anymore
 		# so we implement it here
 		self.newList = []
-		seenicon = loadPicture('/usr/lib/enigma2/python/Plugins/Extensions/DreamPlex/skins/default/icons/seen-fs8.png')
-		unseenicon = loadPicture('/usr/lib/enigma2/python/Plugins/Extensions/DreamPlex/skins/default/icons/unseen-fs8.png')
-		startedicon = loadPicture('/usr/lib/enigma2/python/Plugins/Extensions/DreamPlex/skins/default/icons/started-fs8.png')
+		undefinedIcon = loadPicture('/usr/lib/enigma2/python/Plugins/Extensions/DreamPlex/skins/default/all/picreset.png')
+
 		for listView in self.listViewList:
-			#printl("seenVisu location: " + str(listView[4]), self, "D")
+			printl("seenVisu location: " + str(listView[4]), self, "D")
 			if listView is not None:
-				if '/seen-fs8.png' in str(listView[4]):
-					seenVisu = seenicon
-				elif '/started-fs8.png' in str(listView[4]):
-					seenVisu = startedicon
+				if 'seen-fs8.png' == str(listView[4]):
+					seenVisu = self.seenPic
+
+				elif 'started-fs8.png' == str(listView[4]):
+					seenVisu = self.startedPic
+
+				elif 'unseen-fs8.png' == str(listView[4]):
+					seenVisu = self.unseenPic
+
 				else:
-					seenVisu = unseenicon
-				#printl("loading seenVisu ... (" + str(seenVisu) + ")" , self, "D")
+					seenVisu = undefinedIcon
+
 				content = (listView[0], listView[1], listView[2], listView[3], seenVisu ,listView[5])
 				self.newList.append(content)
 
@@ -1528,12 +1537,27 @@ class DP_View(Screen, NumericalTextInput):
 	def playEntry(self, selection):
 		printl("", self, "S")
 
+		if config.plugins.dreamplex.useBackdropVideos.value:
+			self.stopBackdropVideo()
+
 		self.media_id = selection[1]['ratingKey']
 		server = selection[1]['server']
 
 		self.count, self.options, self.server = Singleton().getPlexInstance().getMediaOptionsToPlay(self.media_id, server, False)
 
 		self.selectMedia(self.count, self.options, self.server)
+
+		printl("", self, "C")
+
+	#===============================================================================
+	#
+	#===============================================================================
+	def stopBackdropVideo(self):
+		printl("", self, "S")
+
+		if self.loadedStillPictureLib and self.usedStillPicture:
+			# stop the m1v playback to avoid blocking the playback of the movie
+			self["backdropVideo"].finishStillPicture()
 
 		printl("", self, "C")
 
@@ -1615,7 +1639,7 @@ class DP_View(Screen, NumericalTextInput):
 				locations = _("Location:") + "\n " + self.playerData['locations']
 				suggestion = _("Please verify you direct local settings")
 				fallback = _("I will now try to play the file via transcode.")
-				self.session.openWithCallback(self.checkResume, MessageBox,_("Warning:") + ("\n%s\n\n%s\n\n%s\n\n%s") % (message, locations, suggestion, fallback), MessageBox.TYPE_ERROR)
+				self.session.openWithCallback(self.checkResume, MessageBox,_("Warning:") + "\n%s\n\n%s\n\n%s\n\n%s" % (message, locations, suggestion, fallback), MessageBox.TYPE_ERROR)
 			else:
 				self.checkResume(resumeStamp)
 
@@ -1790,11 +1814,11 @@ class DP_View(Screen, NumericalTextInput):
 			else:
 				name = item.get('language').encode("utf-8", "")
 
-			sub_id = item.get('id', "")
+			stream_id = item.get('id', "")
 			languageCode = item.get('languageCode', "")
 			part_id = item.get('partid', "")
 
-			functionList.append((name, media_id, languageCode, sub_id, server, part_id, selected))
+			functionList.append((name, media_id, languageCode, stream_id, server, part_id, selected))
 
 		selection = 0
 		for i in range(len(functionList)):
@@ -1933,7 +1957,7 @@ class DP_View(Screen, NumericalTextInput):
 		printl("", self, "C")
 
 	#===========================================================================
-	# choice = name, media_id, languageCode, sub_id, server, part_id, selected
+	# choice = name, media_id, languageCode, stream_id, server, part_id, selected
 	#===========================================================================
 	def displayAudioMenuCallback(self, choice):
 		printl("", self, "S")
@@ -1943,12 +1967,12 @@ class DP_View(Screen, NumericalTextInput):
 
 		printl("choice" + str(choice), self, "D")
 
-		Singleton().getPlexInstance().setAudioById(choice[4], choice[2], choice[5])
+		Singleton().getPlexInstance().setAudioById(choice[4], choice[3], choice[5])
 
 		printl("", self, "C")
 
 	#===========================================================================
-	# choice = name, media_id, languageCode, sub_id, server, part_id, selected
+	# choice = name, media_id, languageCode, stream_id, server, part_id, selected
 	#===========================================================================
 	def displaySubtitleMenuCallback(self, choice):
 		printl("", self, "S")
@@ -2145,8 +2169,32 @@ class DP_View(Screen, NumericalTextInput):
 		# if we are in fastScrollMode we remove some gui elements
 		self.resetGuiElementsInFastScrollMode()
 
+		self.getSeenVisus()
+
 		printl("", self, "C")
 
+
+	#===============================================================================
+	#
+	#===============================================================================
+	def getSeenVisus(self):
+		printl("", self, "S")
+
+		tree = Singleton().getSkinParamsInstance()
+
+		for seenPic in tree.findall('seenPic'):
+			self.seenPic = loadPicture(str(seenPic.get('path')))
+			printl("self.seenPic: " + str(self.seenPic), self, "D")
+
+		for startedPic in tree.findall('startedPic'):
+			self.startedPic = loadPicture(str(startedPic.get('path')))
+			printl("self.startedPic: " + str(self.startedPic), self, "D")
+
+		for unseenPic in tree.findall('unseenPic'):
+			self.unseenPic = loadPicture(str(unseenPic.get('path')))
+			printl("self.unseenPic: " + str(self.unseenPic), self, "D")
+
+		printl("", self, "C")
 	#===========================================================================
 	#
 	#===========================================================================

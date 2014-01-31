@@ -119,8 +119,13 @@ class DPS_Settings(Screen, ConfigListScreen, HelpableScreen):
 		# playing themes stops live tv for this reason we enable this only if live stops on startup is set
 		# also backdrops as video needs to turn of live tv
 		if config.plugins.dreamplex.stopLiveTvOnStartup.value:
-			self.cfglist.append(getConfigListEntry(_(">> Play Themes in TV Shows"), config.plugins.dreamplex.playTheme, _(" ")))
 			self.cfglist.append(getConfigListEntry(_(">> Show Backdrops as Videos"), config.plugins.dreamplex.useBackdropVideos, _("Use this if you have m1v videos as backdrops")))
+
+			# if backdrop videos are active we have to turn off theme playback
+			if config.plugins.dreamplex.useBackdropVideos.value:
+				config.plugins.dreamplex.playTheme.value = False
+			else:
+				self.cfglist.append(getConfigListEntry(_(">> Play Themes in TV Shows"), config.plugins.dreamplex.playTheme, _(" ")))
 		else:
 			# if the live startup stops is not set we have to turn of playtheme automatically
 			config.plugins.dreamplex.playTheme.value = False
@@ -559,17 +564,18 @@ class DPS_ServerEntryConfigScreen(ConfigListScreen, Screen):
 		self.cfglist.append(getConfigListEntry(_(" > Connection Type"), self.current.connectionType, _(" ")))
 		
 		if self.current.connectionType.value == "0": # IP
-			self.cfglist.append(getConfigListEntry(_(" >> IP"), self.current.ip, _(" ")))
-			self.cfglist.append(getConfigListEntry(_(" >> Port"), self.current.port, _(" ")))
+			self.cfglist.append(getConfigListEntry(_(" > Local Authentication"), self.current.localAuth, _("Toggle state to on/off")))
+			self.addIpSettings()
+			if self.current.localAuth.value:
+				self.addMyPlexSettings()
+
 		elif self.current.connectionType.value == "1": # DNS
 			self.cfglist.append(getConfigListEntry(_(" >> DNS"), self.current.dns, _(" ")))
 			self.cfglist.append(getConfigListEntry(_(" >> Port"), self.current.port, _(" ")))
+
 		elif self.current.connectionType.value == "2": # MYPLEX
-			self.cfglist.append(getConfigListEntry(_(" >> myPLEX URL"), self.current.myplexUrl, _("You need curl installed for this feature! Please check in System ...")))
-			self.cfglist.append(getConfigListEntry(_(" >> myPLEX Username"), self.current.myplexUsername, _("You need curl installed for this feature! Please check in System ...")))
-			self.cfglist.append(getConfigListEntry(_(" >> myPLEX Password"), self.current.myplexPassword, _("You need curl installed for this feature! Please check in System ...")))
-			self.cfglist.append(getConfigListEntry(_(" >> myPLEX renew myPlex token"), self.current.renewMyplexToken, _("You need curl installed for this feature! Please check in System ...")))
-		
+			self.addMyPlexSettings()
+
 		##
 		self.cfglist.append(getConfigListEntry(_("Playback Settings") + separator, config.plugins.dreamplex.about, _(" ")))
 		##
@@ -621,7 +627,31 @@ class DPS_ServerEntryConfigScreen(ConfigListScreen, Screen):
 		self.setKeyNames()
 			
 		printl("", self, "C")
-	
+
+	#===========================================================================
+	#
+	#===========================================================================
+	def addIpSettings(self):
+		printl("", self, "S")
+
+		self.cfglist.append(getConfigListEntry(_(" >> IP"), self.current.ip, _(" ")))
+		self.cfglist.append(getConfigListEntry(_(" >> Port"), self.current.port, _(" ")))
+
+		printl("", self, "C")
+
+	#===========================================================================
+	#
+	#===========================================================================
+	def addMyPlexSettings(self):
+		printl("", self, "S")
+
+		self.cfglist.append(getConfigListEntry(_(" >> myPLEX URL"), self.current.myplexUrl, _("You need curl installed for this feature! Please check in System ...")))
+		self.cfglist.append(getConfigListEntry(_(" >> myPLEX Username"), self.current.myplexUsername, _("You need curl installed for this feature! Please check in System ...")))
+		self.cfglist.append(getConfigListEntry(_(" >> myPLEX Password"), self.current.myplexPassword, _("You need curl installed for this feature! Please check in System ...")))
+		self.cfglist.append(getConfigListEntry(_(" >> myPLEX renew myPlex token"), self.current.renewMyplexToken, _("You need curl installed for this feature! Please check in System ...")))
+
+		printl("", self, "C")
+
 	#===========================================================================
 	# 
 	#===========================================================================

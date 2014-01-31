@@ -458,10 +458,10 @@ class DPS_MainMenu(Screen):
 		printl("", self, "S")
 		
 		if config.plugins.dreamplex.stopLiveTvOnStartup.value:
-				self.session.nav.playService(self.currentService)
-		self.close((True,) )	#===============================================================================
-	# 
-	#===============================================================================
+			printl("restoring liveTv", self, "D")
+			self.session.nav.playService(self.currentService)
+
+		self.close((True,) )
 		
 		printl("", self, "C")
 		
@@ -538,7 +538,7 @@ class DPS_MainMenu(Screen):
 			self.sleepNow()
 		else:
 			# User said 'no'
-			self.getServerData() 
+			self.refreshMenu(0)
 	
 		printl("", self, "C")
 		
@@ -618,7 +618,7 @@ class DPS_MainMenu(Screen):
 	def Error(self, error):
 		printl("", self, "S")
 		
-		self.session.open(MessageBox,_("UNEXPECTED ERROR:") + ("\n%s") % error, MessageBox.TYPE_INFO)
+		self.session.open(MessageBox,_("UNEXPECTED ERROR:") + "\n%s" % error, MessageBox.TYPE_INFO)
 		
 		printl("", self, "C")
 		
