@@ -31,7 +31,8 @@ from __common__ import printl2 as printl
 #===============================================================================
 def wake_on_lan(macaddress):
 	printl ("", "DPH_WOL::wake_on_lan", "S")
-	printl ("using this mac ... " + macaddress, "DPH_WOL::wake_on_lan", "i")
+
+	printl ("using this mac ... " + macaddress, "DPH_WOL::wake_on_lan", "D")
 	
 	# Check macaddress format and try to compensate.
 	if len(macaddress) == 12:
@@ -40,7 +41,7 @@ def wake_on_lan(macaddress):
 		sep = macaddress[2]
 		macaddress = macaddress.replace(sep, '')
 	else:
-		printl ("Incorrect MAC address format", "DPH_WOL::wake_on_lan", "W")
+		printl ("Incorrect MAC address format", "DPH_WOL::wake_on_lan", "D")
 		raise ValueError('Incorrect MAC address format')
 
 	# Pad the synchronization stream.
@@ -52,7 +53,7 @@ def wake_on_lan(macaddress):
 		send_data = ''.join([send_data, struct.pack('B', int(data[i: i + 2], 16))])
 
 	# Broadcast it to the LAN.
-	sock = socket.socket(socket.SOCK_DGRAM)
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 	sock.sendto(send_data, ('<broadcast>', 7))
 	

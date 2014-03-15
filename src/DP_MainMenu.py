@@ -51,7 +51,7 @@ from DPH_Singleton import Singleton
 
 #===============================================================================
 #
-#===============================================================================	
+#===============================================================================
 class DPS_MainMenu(Screen):
 
 	g_wolon = False
@@ -549,7 +549,7 @@ class DPS_MainMenu(Screen):
 		printl("", self, "S")
 			
 		time.sleep(int(self.g_woldelay))
-		self.getServerData()
+		self.checkServerState()
 		
 		printl("", self, "C")
 	
