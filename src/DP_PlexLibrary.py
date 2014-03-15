@@ -968,8 +968,7 @@ class PlexLibrary(Screen):
 		self.urlPath = urlPath
 
 		try:
-			conn = httplib.HTTPConnection(server)
-
+			conn = httplib.HTTPConnection(server,timeout=10)
 			authHeader = self.get_hTokenForServer()
 			printl("header: " + str(authHeader), self, "D", True, 8)
 			conn.request(myType, urlPath, headers=authHeader)
